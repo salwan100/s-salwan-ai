@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>S-SALWAN2006 AI Universe & Super App</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts: Vazirmatn -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdfa',
+              500: '#14b8a6',
+              600: '#0d9488',
+              900: '#134e4a',
+            },
+            cyanGlow: '#00f3ff',
+            goldRoyal: '#ffd700',
+            neonPurple: '#a855f7',
+            deepBg: '#090d16',
+            cardBg: 'rgba(17, 24, 39, 0.7)'
+          },
+          fontFamily: {
+            vazir: ['Vazirmatn', 'sans-serif']
+          },
+          boxShadow: {
+            'glow-cyan': '0 0 20px rgba(0, 243, 255, 0.35)',
+            'glow-gold': '0 0 20px rgba(255, 215, 0, 0.35)',
+            'glow-purple': '0 0 20px rgba(168, 85, 247, 0.35)',
+            'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      font-family: 'Vazirmatn', sans-serif;
+    }
+    
+    body {
+      background-color: #060913;
+      color: #f3f4f6;
+      overflow-x: hidden;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #090d16;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1f2937;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #00f3ff;
+    }
+
+    /* Animated Dynamic Mesh Gradient Canvas */
+    #mesh-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* Glassmorphism Styles */
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 1rem;
+    }
+
+    .glass-card {
+      background: rgba(30, 41, 59, 0.4);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .glass-card:hover {
+      transform: translateY(-4px) scale(1.01);
+      border-color: rgba(0, 243, 255, 0.3);
+      box-shadow: 0 10px 30px -10px rgba(0, 243, 255, 0.2);
+    }
+
+    .neon-border-cyan {
+      border: 1px solid rgba(0, 243, 255, 0.4);
+      box-shadow: inset 0 0 10px rgba(0, 243, 255, 0.1), 0 0 15px rgba(0, 243, 255, 0.2);
+    }
+
+    .neon-border-gold {
+      border: 1px solid rgba(255, 215, 0, 0.4);
+      box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.1), 0 0 15px rgba(255, 215, 0, 0.2);
+    }
+
+    /* Pulsing animations */
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.4; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.05); }
+    }
+    .pulse-glow {
+      animation: pulseGlow 4s infinite ease-in-out;
+    }
+
+    /* Tab active indicator */
+    .nav-item.active {
+      background: linear-gradient(90deg, rgba(0, 243, 255, 0.15) 0%, rgba(0, 243, 255, 0) 100%);
+      border-right: 4px solid #00f3ff;
+      color: #00f3ff;
+    }
+
+    /* Custom audio wave visualization bar */
+    .wave-bar {
+      width: 4px;
+      height: 20px;
+      background: #00f3ff;
+      border-radius: 2px;
+      animation: wave 1.2s ease-in-out infinite alternate;
+    }
+    @keyframes wave {
+      0% { height: 6px; }
+      100% { height: 36px; }
+    }
+
+    /* Theme Overrides */
+    .theme-gold {
+      --accent-color: #ffd700;
+      --accent-glow: rgba(255, 215, 0, 0.3);
+    }
+    .theme-emerald {
+      --accent-color: #10b981;
+      --accent-glow: rgba(16, 185, 129, 0.3);
+    }
+    .theme-cyberpunk {
+      --accent-color: #ff007f;
+      --accent-glow: rgba(255, 0, 127, 0.3);
+    }
+  </style>
+</head>
+<body class="min-h-screen text-slate-100 flex flex-col selection:bg-cyan-500 selection:text-black">
+
+  <!-- BACKGROUND ANIMATED CANVAS -->
+  <canvas id="mesh-canvas"></canvas>
+
+  <!-- TOP HEADER GLASSBAR -->
+  <header class="sticky top-0 z-40 w-full glass-panel border-b border-slate-800/80 px-4 py-3 flex items-center justify-between shadow-2xl">
+    <div class="flex items-center gap-3">
+      <!-- Mobile Menu Toggle -->
+      <button id="mobileMenuBtn" class="lg:hidden p-2 rounded-lg bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-700">
+        <i class="fa-solid fa-bars text-lg"></i>
+      </button>
+
+      <!-- App Logo -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('dashboard')">
+        <div class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-indigo-600 to-fuchsia-500 p-[2px] shadow-glow-cyan">
+          <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
+            <i class="fa-solid fa-brain text-cyan-400 text-xl animate-pulse"></i>
+          </div>
+        </div>
+        <div>
+          <h1 class="text-lg font-black tracking-wider bg-gradient-to-r from-cyan-400 via-teal-300 to-indigo-300 bg-clip-text text-transparent">
+            S-SALWAN2006 <span class="text-xs px-2 py-0.5 rounded bg-cyan-950/80 text-cyan-400 border border-cyan-500/30">UNIVERSE AI</span>
+          </h1>
+          <p class="text-[10px] text-slate-400 font-medium">سیستەمی پێشکەوتووی ژیری دەستکردی کوردی</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Status Widgets & Actions -->
+    <div class="flex items-center gap-3">
+      <!-- Live Voice Assistant Quick Trigger -->
+      <button onclick="switchTab('voice-assistant')" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/20 text-xs font-semibold transition shadow-glow-cyan">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+        </span>
+        <i class="fa-solid fa-microphone"></i>
+        <span>دەنگی ڕاستەوخۆ</span>
+      </button>
+
+      <!-- Token / VIP Status -->
+      <div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900/80 border border-amber-500/30 text-amber-400 text-xs font-medium">
+        <i class="fa-solid fa-crown text-amber-400"></i>
+        <span>ئەندامی VIP Enterprise</span>
+      </div>
+
+      <!-- Theme Switcher Dropdown Trigger -->
+      <div class="relative">
+        <button id="themeBtn" onclick="toggleThemeMenu()" class="p-2.5 rounded-xl glass-card hover:border-cyan-400 text-slate-300 transition">
+          <i class="fa-solid fa-palette text-cyan-400"></i>
+        </button>
+        <!-- Theme Options Menu -->
+        <div id="themeMenu" class="hidden absolute left-0 mt-2 w-44 glass-panel border border-slate-700 shadow-2xl rounded-xl p-2 z-50">
+          <div class="text-[11px] font-bold text-slate-400 px-2 py-1 mb-1 border-b border-slate-800">هەڵبژاردنی ڕەنگ</div>
+          <button onclick="setTheme('default')" class="w-full text-right px-3 py-1.5 rounded-lg text-xs hover:bg-slate-800 flex items-center justify-between text-cyan-400">
+            <span>Neon Cyan</span>
+            <span class="w-3 h-3 rounded-full bg-cyan-400"></span>
+          </button>
+          <button onclick="setTheme('gold')" class="w-full text-right px-3 py-1.5 rounded-lg text-xs hover:bg-slate-800 flex items-center justify-between text-amber-400">
+            <span>Gold Royal</span>
+            <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+          </button>
+          <button onclick="setTheme('emerald')" class="w-full text-right px-3 py-1.5 rounded-lg text-xs hover:bg-slate-800 flex items-center justify-between text-emerald-400">
+            <span>Emerald Nature</span>
+            <span class="w-3 h-3 rounded-full bg-emerald-400"></span>
+          </button>
+          <button onclick="setTheme('cyberpunk')" class="w-full text-right px-3 py-1.5 rounded-lg text-xs hover:bg-slate-800 flex items-center justify-between text-fuchsia-400">
+            <span>Deep Cyberpunk</span>
+            <span class="w-3 h-3 rounded-full bg-fuchsia-400"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Auth Profile Button -->
+      <button onclick="openAuthModal()" class="flex items-center gap-2 p-1.5 pr-3 rounded-xl glass-card hover:border-cyan-400/50 transition">
+        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" class="w-7 h-7 rounded-lg object-cover ring-2 ring-cyan-500/50" alt="User">
+        <span class="text-xs font-semibold text-slate-200 hidden lg:inline">سەلوان ئەحمەد</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN WRAPPER WITH PERSISTENT SIDEBAR -->
+  <div class="flex-1 flex overflow-hidden">
+
+    <!-- NAVIGATION SIDEBAR -->
+    <aside id="sidebar" class="fixed lg:static inset-y-0 right-0 z-30 w-64 glass-panel border-l border-slate-800/80 flex flex-col justify-between transition-transform duration-300 transform translate-x-full lg:translate-x-0 pt-16 lg:pt-0">
+      
+      <div class="p-4 space-y-6 overflow-y-auto max-h-[calc(100vh-80px)]">
+        <!-- Main Navigation Links -->
+        <div>
+          <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-3 mb-2">بەشە سەرەکییەکان</div>
+          <nav class="space-y-1">
+            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item active w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition text-slate-300 hover:bg-slate-800/50">
+              <i class="fa-solid fa-house w-5 text-center text-cyan-400"></i>
+              <span>داشبۆردی سەرەکی</span>
+            </button>
+            <button onclick="switchTab('voice-assistant')" id="nav-voice-assistant" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition text-slate-300 hover:bg-slate-800/50">
+              <i class="fa-solid fa-microphone-lines w-5 text-center text-cyan-400"></i>
+              <span>سیستەمی دەنگی S-SALWAN</span>
+            </button>
+            <button onclick="switchTab('qa-community')" id="nav-qa-community" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition text-slate-300 hover:bg-slate-800/50">
+              <i class="fa-solid fa-comments w-5 text-center text-cyan-400"></i>
+              <span>پرس و وەڵامی ڕاستەوخۆ</span>
+            </button>
+            <button onclick="switchTab('smart-search')" id="nav-smart-search" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition text-slate-300 hover:bg-slate-800/50">
+              <i class="fa-solid fa-magnifying-glass-chart w-5 text-center text-cyan-400"></i>
+              <span>گەڕانی زیرەکی AI</span>
+            </button>
+          </nav>
+        </div>
+
+        <!-- Media & Creativity -->
+        <div>
+          <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-3 mb-2">میدیا و داهێنان</div>
+          <nav class="space-y-1">
+            <button onclick="switchTab('gallery')" id="nav-gallery" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition text-slate-300 hover:bg-slate-800/50">
+              <i class="fa-solid fa-images w-5 text-center text-emerald-400"></i>
+              <span>گالێریی Ultra-HD</span>
+            </button>
+            <button onclick="switchTab('ai-studio')" id="nav-ai-studio" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition text-slate-300 hover:bg-slate-800/50">
+              <i class="fa-solid fa-wand-magic-sparkles w-5 text-center text-fuchsia-400"></i>
+              <span>تاقیگەی وێنەی AI</span>
+            </button>
+            <button onclick="switchTab('kurdish-culture')" id="nav-kurdish-culture" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition text-slate-300 hover:bg-slate-800/50">
+              <i class="fa-solid fa-book-open-reader w-5 text-center text-amber-400"></i>
+              <span>هۆنراوە و کەلتوری کوردی</span>
+            </button>
+          </nav>
+        </div>
+
+        <!-- Account & Analytics -->
+        <div>
+          <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-3 mb-2">ئەکاونت و ئامار</div>
+          <nav class="space-y-1">
+            <button onclick="switchTab('analytics')" id="nav-analytics" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition text-slate-300 hover:bg-slate-800/50">
+              <i class="fa-solid fa-chart-line w-5 text-center text-blue-400"></i>
+              <span>داشبۆردی ئامارەکان</span>
+            </button>
+            <button onclick="switchTab('profile')" id="nav-profile" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition text-slate-300 hover:bg-slate-800/50">
+              <i class="fa-solid fa-user-gear w-5 text-center text-violet-400"></i>
+              <span>پڕۆفایلی بەکارهێنەر</span>
+            </button>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Sidebar Footer Mini Widget -->
+      <div class="p-4 border-t border-slate-800/80 bg-slate-950/40">
+        <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+          <span>دۆخی ڕاژەکاری AI:</span>
+          <span class="text-emerald-400 flex items-center gap-1 font-bold">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> چالاکە
+          </span>
+        </div>
+        <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+          <div class="bg-gradient-to-r from-cyan-500 to-indigo-500 h-1.5 rounded-full w-[88%]"></div>
+        </div>
+        <div class="text-[10px] text-slate-500 mt-1 text-center">وەشانی سیستەم v4.8 Enterprise</div>
+      </div>
+    </aside>
+
+    <!-- CONTENT DISPLAY AREA -->
+    <main class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 space-y-8 relative">
+
+      <!-- ================= 1. DASHBOARD OVERVIEW TAB ================= -->
+      <section id="tab-dashboard" class="tab-content space-y-6">
+        <!-- Hero Banner -->
+        <div class="relative overflow-hidden rounded-2xl glass-panel p-6 md:p-8 neon-border-cyan">
+          <div class="absolute -top-24 -left-24 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+          <div class="relative z-10 max-w-3xl space-y-4">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-semibold">
+              <i class="fa-solid fa-sparkles"></i> سەکۆی گشتگیری S-SALWAN2006 Super App
+            </div>
+            <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
+              بەخێربێیت بۆ تاقانەترین <span class="bg-gradient-to-r from-cyan-400 via-teal-300 to-amber-300 bg-clip-text text-transparent">گەردوونی ژیری دەستکرد</span>
+            </h2>
+            <p class="text-slate-300 text-sm md:text-base leading-relaxed">
+              سەکۆیەکی بەهێز بۆ ئەنجامدانی گفتوگۆی دەنگی ڕاستەوخۆ بە زمانی کوردی، شیکاری گەڕانی قووڵ، دروستکردنی وێنەی کواڵتی بەرز، پرس و وەڵامی زانستی، و دەیان بەشی ناوازە.
+            </p>
+
+            <div class="flex flex-wrap gap-3 pt-2">
+              <button onclick="switchTab('voice-assistant')" class="px-5 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 font-bold text-sm text-white shadow-glow-cyan hover:opacity-90 transition flex items-center gap-2">
+                <i class="fa-solid fa-microphone-lines"></i>
+                <span>دەستپێکردنی ئاخاوتنی دەنگی</span>
+              </button>
+              <button onclick="switchTab('gallery')" class="px-5 py-3 rounded-xl glass-card text-sm font-bold text-slate-200 hover:border-cyan-400 transition flex items-center gap-2">
+                <i class="fa-solid fa-compass text-cyan-400"></i>
+                <span>گەڕان لە گالێری Ultra-HD</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Stats Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="glass-card p-5 rounded-2xl flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-xl">
+              <i class="fa-solid fa-bolt"></i>
+            </div>
+            <div>
+              <div class="text-2xl font-black text-white">99.8%</div>
+              <div class="text-xs text-slate-400 font-medium">دروستی ئاخاوتنی کوردی</div>
+            </div>
+          </div>
+
+          <div class="glass-card p-5 rounded-2xl flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-xl">
+              <i class="fa-solid fa-users"></i>
+            </div>
+            <div>
+              <div class="text-2xl font-black text-white">45,280+</div>
+              <div class="text-xs text-slate-400 font-medium">بەکارهێنەری چالاک</div>
+            </div>
+          </div>
+
+          <div class="glass-card p-5 rounded-2xl flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-fuchsia-500/10 border border-fuchsia-500/30 flex items-center justify-center text-fuchsia-400 text-xl">
+              <i class="fa-solid fa-image"></i>
+            </div>
+            <div>
+              <div class="text-2xl font-black text-white">120,000+</div>
+              <div class="text-xs text-slate-400 font-medium">وێنەی دروستکراوی AI</div>
+            </div>
+          </div>
+
+          <div class="glass-card p-5 rounded-2xl flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-xl">
+              <i class="fa-solid fa-waveform"></i>
+            </div>
+            <div>
+              <div class="text-2xl font-black text-white">0.25s</div>
+              <div class="text-xs text-slate-400 font-medium">خێرایی وەڵامدانەوەی دەنگ</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Featured Modules Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Voice Suite Card -->
+          <div class="glass-card p-6 rounded-2xl space-y-4 relative overflow-hidden group">
+            <div class="w-10 h-10 rounded-lg bg-cyan-500/20 text-cyan-300 flex items-center justify-center text-lg font-bold">01</div>
+            <h3 class="text-xl font-bold text-white group-hover:text-cyan-400 transition">سیستەمی دەنگی ژیری دەستکرد</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">دەتوانیت بە دەنگ ڕاستەوخۆ قسە لەگەڵ AI بوبکەیت و وەڵامی دەنگی هەنووکەیی لەگەڵ لەرەلەری دەنگ وەربگریتەوە.</p>
+            <button onclick="switchTab('voice-assistant')" class="text-xs font-bold text-cyan-400 flex items-center gap-2 hover:underline">
+              تاقیکردنەوەی ئێستا <i class="fa-solid fa-arrow-left"></i>
+            </button>
+          </div>
+
+          <!-- Q&A Hub Card -->
+          <div class="glass-card p-6 rounded-2xl space-y-4 relative overflow-hidden group">
+            <div class="w-10 h-10 rounded-lg bg-amber-500/20 text-amber-300 flex items-center justify-center text-lg font-bold">02</div>
+            <h3 class="text-xl font-bold text-white group-hover:text-amber-400 transition">پرس و وەڵامی کۆمەڵگە</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">پرس و وەڵامی ڕاستەوخۆ لە هەموو بوارەکان لەگەڵ وەڵامدانەوەی پچڕنەنەبووی شارەزایانی AI.</p>
+            <button onclick="switchTab('qa-community')" class="text-xs font-bold text-amber-400 flex items-center gap-2 hover:underline">
+              چوون بۆ پرس و وەڵام <i class="fa-solid fa-arrow-left"></i>
+            </button>
+          </div>
+
+          <!-- Gallery Card -->
+          <div class="glass-card p-6 rounded-2xl space-y-4 relative overflow-hidden group">
+            <div class="w-10 h-10 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center text-lg font-bold">03</div>
+            <h3 class="text-xl font-bold text-white group-hover:text-emerald-400 transition">گالێریی فرە-چەشنی Ultra HD</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">سەدان وێنەی تایبەت بە ئۆتۆمبێلی خێرا، مرۆڤ و کەلتوری کوردی، سروشت و دار، و گەردوون.</p>
+            <button onclick="switchTab('gallery')" class="text-xs font-bold text-emerald-400 flex items-center gap-2 hover:underline">
+              بینینی گالێری <i class="fa-solid fa-arrow-left"></i>
+            </button>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ================= 2. REAL-TIME AI VOICE ASSISTANT TAB ================= -->
+      <section id="tab-voice-assistant" class="tab-content hidden space-y-6">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 glass-panel p-6 rounded-2xl">
+          <div>
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-microphone-lines text-cyan-400"></i>
+              S-SALWAN2006 Real-Time Voice AI
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">ئاخاوتنی ڕاستەوخۆ بە دەنگ بە زمانەکانی کوردی سورانی، عەرەبی و ئینگلیزی</p>
+          </div>
+
+          <!-- Model Switcher -->
+          <div class="flex items-center gap-2 bg-slate-900/80 p-1.5 rounded-xl border border-slate-700">
+            <span class="text-xs font-semibold px-2 text-slate-400">مۆدێل:</span>
+            <select id="voiceModelSelect" class="bg-slate-800 text-xs text-cyan-300 font-bold px-3 py-1.5 rounded-lg border-none focus:ring-1 focus:ring-cyan-400 outline-none">
+              <option value="S-SALWAN Turbo">S-SALWAN2006 Turbo (خێرا)</option>
+              <option value="S-SALWAN Vision">S-SALWAN2006 Vision Pro</option>
+              <option value="S-SALWAN Audio Pro" selected>S-SALWAN2006 Audio Pro (دەنگی باڵا)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Voice Visualization Canvas Panel -->
+          <div class="lg:col-span-2 glass-panel p-6 rounded-2xl flex flex-col items-center justify-between min-h-[420px] relative overflow-hidden">
+            <!-- Background Glow -->
+            <div id="voiceGlowBg" class="absolute w-72 h-72 rounded-full bg-cyan-500/10 blur-3xl transition-all duration-500"></div>
+
+            <!-- Header Status -->
+            <div class="w-full flex items-center justify-between z-10">
+              <div id="voiceStatusBadge" class="px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-xs text-slate-300 flex items-center gap-2">
+                <span id="voiceStatusDot" class="w-2.5 h-2.5 rounded-full bg-slate-500"></span>
+                <span id="voiceStatusText">ئامادەیە بۆ گوێگرتن</span>
+              </div>
+              <div class="text-xs text-slate-400 flex items-center gap-3">
+                <span class="flex items-center gap-1"><i class="fa-solid fa-gauge text-cyan-400"></i> Latency: 18ms</span>
+              </div>
+            </div>
+
+            <!-- Dynamic Live Audio Waves Canvas -->
+            <div class="my-8 w-full flex flex-col items-center justify-center z-10">
+              <canvas id="voiceWaveCanvas" class="w-full h-32 max-w-lg mb-4"></canvas>
+              <div id="listeningPrompt" class="text-sm font-semibold text-cyan-300/80 text-center animate-pulse">
+                کلیک لەسەر میکڕۆفۆنەکە بکه و بە دەنگ قسە بکە...
+              </div>
+            </div>
+
+            <!-- Big Interactive Microphone Button -->
+            <div class="z-10 flex flex-col items-center gap-4">
+              <button id="micToggleBtn" onclick="toggleVoiceRecognition()" class="w-20 h-20 rounded-full bg-gradient-to-tr from-cyan-500 via-indigo-600 to-fuchsia-600 p-1 shadow-glow-cyan hover:scale-105 transition-transform duration-300 flex items-center justify-center group">
+                <div class="w-full h-full rounded-full bg-slate-950 flex items-center justify-center text-cyan-400 text-2xl group-hover:text-white">
+                  <i id="micIcon" class="fa-solid fa-microphone"></i>
+                </div>
+              </button>
+              <span class="text-xs text-slate-400">کۆنترۆڵی دەنگ بە کارایی دەستبەجێ</span>
+            </div>
+          </div>
+
+          <!-- Controls & Voice Settings Sidebar -->
+          <div class="glass-panel p-6 rounded-2xl space-y-6">
+            <h3 class="text-lg font-bold text-white border-b border-slate-800 pb-3 flex items-center gap-2">
+              <i class="fa-solid fa-sliders text-cyan-400"></i>
+              ڕێکخستنەکانی دەنگ
+            </h3>
+
+            <!-- Language Switcher -->
+            <div class="space-y-2">
+              <label class="text-xs font-semibold text-slate-300">زمانی گفتوگۆ:</label>
+              <select id="voiceLangSelect" class="w-full bg-slate-900 border border-slate-700 text-xs text-slate-200 rounded-xl p-2.5 focus:border-cyan-400 outline-none">
+                <option value="ckb-IQ" selected>کوردی (سورانی) - Kurdish</option>
+                <option value="ar-IQ">عەرەبی - Arabic</option>
+                <option value="en-US">ئینگلیزی - English</option>
+              </select>
+            </div>
+
+            <!-- Voice Speed Controller -->
+            <div class="space-y-2">
+              <div class="flex justify-between text-xs text-slate-300">
+                <span>خێرایی ئاخاوتن (Speed):</span>
+                <span id="speedValue" class="text-cyan-400 font-bold">1.0x</span>
+              </div>
+              <input type="range" id="speechRate" min="0.5" max="2" step="0.1" value="1.0" oninput="document.getElementById('speedValue').innerText = this.value + 'x'" class="w-full accent-cyan-400 bg-slate-800 rounded-lg h-2">
+            </div>
+
+            <!-- Pitch Controller -->
+            <div class="space-y-2">
+              <div class="flex justify-between text-xs text-slate-300">
+                <span>پۆست و لەرەلەر (Pitch):</span>
+                <span id="pitchValue" class="text-cyan-400 font-bold">1.0</span>
+              </div>
+              <input type="range" id="speechPitch" min="0.5" max="1.5" step="0.1" value="1.0" oninput="document.getElementById('pitchValue').innerText = this.value" class="w-full accent-cyan-400 bg-slate-800 rounded-lg h-2">
+            </div>
+
+            <!-- Auto-Speak AI Toggle -->
+            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 border border-slate-800">
+              <span class="text-xs font-semibold text-slate-300">وەڵامدانەوەی دەنگی خێرا</span>
+              <input type="checkbox" id="autoSpeakToggle" checked class="w-4 h-4 accent-cyan-400 rounded">
+            </div>
+
+            <!-- Quick Voice Test Button -->
+            <button onclick="speakText('بەخێربێیت بۆ سستەمی دەنگی سەلوان ئێ ئای. هەموو شتێک بۆ خزمەتی تۆ ئامادەیە.')" class="w-full py-2.5 rounded-xl border border-cyan-500/30 text-cyan-300 text-xs font-bold hover:bg-cyan-500/10 transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-volume-high"></i>
+              تاقیکردنەوەی دەنگی AI
+            </button>
+          </div>
+        </div>
+
+        <!-- Real-time Voice Chat Log -->
+        <div class="glass-panel p-6 rounded-2xl space-y-4">
+          <h3 class="text-base font-bold text-white flex items-center justify-between">
+            <span>تۆماری گفتوگۆی دەنگی ڕاستەوخۆ</span>
+            <button onclick="clearVoiceLog()" class="text-xs font-normal text-slate-400 hover:text-rose-400">سڕینەوەی لۆگ</button>
+          </h3>
+          <div id="voiceChatLog" class="space-y-3 max-h-64 overflow-y-auto p-3 bg-slate-950/50 rounded-xl border border-slate-800 text-xs">
+            <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300">
+              <span class="font-bold text-cyan-400">S-SALWAN AI:</span> بەخێربێیت! میکڕۆفۆنەکە دابگرە بۆ دەستپێکردنی قسەکردن بە زمانی کوردی.
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ================= 3. COMMUNITY LIVE Q&A TAB ================= -->
+      <section id="tab-qa-community" class="tab-content hidden space-y-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 glass-panel p-6 rounded-2xl">
+          <div>
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-comments text-amber-400"></i>
+              پرس و وەڵامی ڕاستەوخۆ (Live Community Q&A)
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">پرسیار بکە و لەگەڵ بەکارهێنەران و AI سەلوان وەڵامی دەستبەجێ وەربگرە</p>
+          </div>
+          <button onclick="openAskQuestionModal()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 font-bold text-xs text-white shadow-glow-gold hover:opacity-90 transition flex items-center gap-2">
+            <i class="fa-solid fa-plus"></i>
+            زیادکردنی پرسیاری نوێ
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <!-- Main Questions Feed -->
+          <div class="lg:col-span-3 space-y-4" id="questionsContainer">
+            <!-- Questions rendered via Javascript -->
+          </div>
+
+          <!-- Community Stats & Top Contributors -->
+          <div class="space-y-4">
+            <div class="glass-panel p-5 rounded-2xl space-y-4">
+              <h3 class="text-sm font-bold text-white border-b border-slate-800 pb-2">چالاکی زیندووی کۆمەڵگە</h3>
+              <div class="space-y-3 text-xs">
+                <div class="flex justify-between text-slate-300">
+                  <span>پرسیارە وەڵامدراوەکان:</span>
+                  <span class="text-emerald-400 font-bold">98.4%</span>
+                </div>
+                <div class="flex justify-between text-slate-300">
+                  <span>تێکڕای خێرایی وەڵام:</span>
+                  <span class="text-cyan-400 font-bold">4 چڕکە</span>
+                </div>
+                <div class="flex justify-between text-slate-300">
+                  <span>کەسی سەرهێڵ:</span>
+                  <span class="text-amber-400 font-bold flex items-center gap-1">
+                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span> 1,240
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Top AI Experts -->
+            <div class="glass-panel p-5 rounded-2xl space-y-3">
+              <h3 class="text-sm font-bold text-white border-b border-slate-800 pb-2">سەرکردەکانی وەڵامدانەوە</h3>
+              <div class="space-y-2 text-xs">
+                <div class="flex items-center gap-2 p-1.5 rounded-lg bg-slate-900/60">
+                  <span class="w-5 font-bold text-amber-400">1</span>
+                  <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80" class="w-7 h-7 rounded-full" alt="User">
+                  <div class="flex-1">
+                    <div class="font-bold text-slate-200">د. پشتیوان شێخ</div>
+                    <div class="text-[10px] text-slate-400">4,210 points</div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2 p-1.5 rounded-lg bg-slate-900/60">
+                  <span class="w-5 font-bold text-slate-300">2</span>
+                  <img src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=80&q=80" class="w-7 h-7 rounded-full" alt="User">
+                  <div class="flex-1">
+                    <div class="font-bold text-slate-200">S-SALWAN Bot</div>
+                    <div class="text-[10px] text-slate-400">3,980 points</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ================= 4. ULTRA-HD MULTI-CATEGORY GALLERY TAB ================= -->
+      <section id="tab-gallery" class="tab-content hidden space-y-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 glass-panel p-6 rounded-2xl">
+          <div>
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-images text-emerald-400"></i>
+              گالێریی وێنەی Ultra-HD
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">ئۆتۆمبێلە سوپەرەکان، مرۆڤ و کەلتور، سروشت و دار، و گەردوون</p>
+          </div>
+
+          <!-- Category Filters -->
+          <div class="flex flex-wrap gap-2" id="galleryFilterContainer">
+            <button onclick="filterGallery('all')" class="gallery-filter-btn px-3 py-1.5 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs shadow-glow-emerald">هەمووی</button>
+            <button onclick="filterGallery('cars')" class="gallery-filter-btn px-3 py-1.5 rounded-xl glass-card text-xs text-slate-300 hover:text-emerald-400">ئۆتۆمبێلی خێرا</button>
+            <button onclick="filterGallery('culture')" class="gallery-filter-btn px-3 py-1.5 rounded-xl glass-card text-xs text-slate-300 hover:text-emerald-400">مرۆڤ و کەلتور</button>
+            <button onclick="filterGallery('nature')" class="gallery-filter-btn px-3 py-1.5 rounded-xl glass-card text-xs text-slate-300 hover:text-emerald-400">دار و سروشت</button>
+            <button onclick="filterGallery('space')" class="gallery-filter-btn px-3 py-1.5 rounded-xl glass-card text-xs text-slate-300 hover:text-emerald-400">گەردوون و زانست</button>
+          </div>
+        </div>
+
+        <!-- Gallery Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="galleryGrid">
+          <!-- Gallery Cards injected via JS -->
+        </div>
+      </section>
+
+
+      <!-- ================= 5. SMART SEARCH ENGINE TAB ================= -->
+      <section id="tab-smart-search" class="tab-content hidden space-y-6">
+        <div class="max-w-3xl mx-auto space-y-6 text-center">
+          <div class="space-y-2">
+            <h2 class="text-3xl font-extrabold text-white">بزوێنەری گەڕانی زیرەکی AI</h2>
+            <p class="text-xs text-slate-400">گەڕانی قووڵ لە زانیارییەکان بە پێشاندانی وەڵامی کورتی کورتکراوە و Knowledge Graph</p>
+          </div>
+
+          <!-- Big Search Bar -->
+          <div class="relative">
+            <input type="text" id="searchInput" placeholder="دەربارەی چی دەتەوێت بزانیت؟ (نموونە: هۆشەنگ سۆسیال، زانستی فیزیا، سیستەمی بزوێنەر)..." class="w-full py-4 pl-12 pr-12 rounded-2xl glass-panel text-sm text-white placeholder-slate-500 border border-slate-700 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/20 outline-none shadow-2xl">
+            <button onclick="performSearch()" class="absolute left-3 top-1/2 -translate-y-1/2 px-4 py-2 rounded-xl bg-cyan-500 text-slate-950 font-bold text-xs hover:bg-cyan-400 transition">
+              گەڕان <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+          </div>
+
+          <!-- Suggested Query Pills -->
+          <div class="flex flex-wrap justify-center gap-2 text-xs">
+            <span class="text-slate-500 font-semibold self-center">پێشنیارکراوەکان:</span>
+            <button onclick="quickSearch('ژیری دەستکرد چییە؟')" class="px-3 py-1 rounded-full glass-card hover:border-cyan-400 text-slate-300">ژیری دەستکرد چییە؟</button>
+            <button onclick="quickSearch('تەکنەلۆجیای ئۆتۆمبێلی کارەبایی')" class="px-3 py-1 rounded-full glass-card hover:border-cyan-400 text-slate-300">ئۆتۆمبێلی کارەبایی</button>
+            <button onclick="quickSearch('مێژووی کورد و کەلتور')" class="px-3 py-1 rounded-full glass-card hover:border-cyan-400 text-slate-300">مێژووی کورد</button>
+          </div>
+        </div>
+
+        <!-- Search Results Container -->
+        <div id="searchResultsArea" class="max-w-4xl mx-auto space-y-4 hidden">
+          <!-- Live Answer Summary Card -->
+          <div class="glass-panel p-6 rounded-2xl border-r-4 border-cyan-400 space-y-3">
+            <div class="flex items-center gap-2 text-cyan-400 font-bold text-xs">
+              <i class="fa-solid fa-robot"></i> کورتکراوەی AI
+            </div>
+            <p id="searchSummaryText" class="text-sm text-slate-200 leading-relaxed"></p>
+          </div>
+
+          <!-- Knowledge Cards Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="searchCardsGrid">
+            <!-- Injected via JS -->
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ================= 6. AI IMAGE STUDIO TAB ================= -->
+      <section id="tab-ai-studio" class="tab-content hidden space-y-6">
+        <div class="glass-panel p-6 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-wand-magic-sparkles text-fuchsia-400"></i>
+              تاقیگەی دروستکردنی وێنەی AI (Studio)
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">دەق بنووسە بۆ دروستکردنی وێنەی مێشکبڕ و کواڵتی نائاسایی</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Prompt Config Form -->
+          <div class="glass-panel p-6 rounded-2xl space-y-4">
+            <div class="space-y-2">
+              <label class="text-xs font-semibold text-slate-300">وەسفی وێنەکە (Prompt):</label>
+              <textarea id="imagePromptInput" rows="4" placeholder="نموونە: وێنەیەکی خەیاڵی بۆ ئۆتۆمبێلێکی نوێ لە ئاسۆیەکی سایبەرپانک لەگەڵ ڕووناکی شین..." class="w-full bg-slate-900 border border-slate-700 text-xs text-slate-200 rounded-xl p-3 focus:border-fuchsia-400 outline-none"></textarea>
+            </div>
+
+            <div class="space-y-2">
+              <label class="text-xs font-semibold text-slate-300">ستایلی وێنە:</label>
+              <select id="imageStyleSelect" class="w-full bg-slate-900 border border-slate-700 text-xs text-slate-200 rounded-xl p-2.5 focus:border-fuchsia-400 outline-none">
+                <option value="Cyberpunk Sci-Fi">سایبەرپانک Sci-Fi</option>
+                <option value="Photorealistic 8K" selected>واقیعی Photorealistic 8K</option>
+                <option value="Kurdish Traditional Art">هونەری کەلتوری کوردی</option>
+                <option value="3D Anime Render">ڕێندەری 3D ئانیمێ</option>
+              </select>
+            </div>
+
+            <button onclick="generateAIStudioImage()" class="w-full py-3 rounded-xl bg-gradient-to-r from-fuchsia-600 to-pink-600 font-bold text-xs text-white shadow-glow-purple hover:opacity-90 transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-paint-brush"></i>
+              دروستکردنی وێنە
+            </button>
+          </div>
+
+          <!-- Result Preview Panel -->
+          <div class="lg:col-span-2 glass-panel p-6 rounded-2xl flex flex-col items-center justify-center min-h-[350px] relative">
+            <div id="imageStudioPlaceholder" class="text-center space-y-3">
+              <i class="fa-regular fa-image text-4xl text-slate-600"></i>
+              <p class="text-xs text-slate-400">وەسفی وێنەکەت بنووسە و دوگمەی دروستکردن دابگرە</p>
+            </div>
+
+            <div id="imageStudioLoading" class="hidden flex-col items-center gap-3">
+              <div class="w-10 h-10 border-4 border-fuchsia-500 border-t-transparent rounded-full animate-spin"></div>
+              <span class="text-xs font-semibold text-fuchsia-300">دروستکردنی وێنە لە ڕێگەی S-SALWAN Vision...</span>
+            </div>
+
+            <div id="imageStudioResult" class="hidden w-full h-full space-y-3">
+              <img id="generatedImageTag" src="" class="w-full h-80 object-cover rounded-xl border border-slate-700" alt="Generated AI">
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-slate-400">کواڵتی: 4K UHD</span>
+                <button onclick="downloadStudioImage()" class="px-4 py-1.5 rounded-lg bg-slate-800 text-xs text-cyan-400 hover:bg-slate-700 border border-slate-700 flex items-center gap-2">
+                  <i class="fa-solid fa-download"></i> داگرتنی وێنە
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ================= 7. KURDISH POETRY & CULTURE HUB TAB ================= -->
+      <section id="tab-kurdish-culture" class="tab-content hidden space-y-6">
+        <div class="glass-panel p-6 rounded-2xl">
+          <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-book-open-reader text-amber-400"></i>
+            گەنجینەی هۆنراوە و پەندە پێشینیانی کوردی
+          </h2>
+          <p class="text-xs text-slate-400 mt-1">شاکارەکانی نالی، مەحوی، شێرکۆ بێکەس، و پەندە زێڕینەکانی کوردی</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="poetryContainer">
+          <!-- Injected via JS -->
+        </div>
+      </section>
+
+
+      <!-- ================= 8. ANALYTICS DASHBOARD TAB ================= -->
+      <section id="tab-analytics" class="tab-content hidden space-y-6">
+        <div class="glass-panel p-6 rounded-2xl">
+          <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-chart-line text-blue-400"></i>
+            داشبۆردی ئامارەکان (Real-Time Analytics)
+          </h2>
+          <p class="text-xs text-slate-400 mt-1">ترافیکی سەردانکەران، ڕێژەی داواکاری AI، و دانیشتنە دەنگییەکان</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="glass-panel p-6 rounded-2xl space-y-4">
+            <h3 class="text-sm font-bold text-white">ترافیکی ڕۆژانەی بەکارهێنەران</h3>
+            <canvas id="trafficChart" class="w-full h-64"></canvas>
+          </div>
+
+          <div class="glass-panel p-6 rounded-2xl space-y-4">
+            <h3 class="text-sm font-bold text-white">دابەشبوونی بەکارهێنانی مۆدێلەکان</h3>
+            <canvas id="modelsChart" class="w-full h-64"></canvas>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ================= 9. USER PROFILE TAB ================= -->
+      <section id="tab-profile" class="tab-content hidden space-y-6">
+        <div class="glass-panel p-6 rounded-2xl flex flex-col md:flex-row items-center gap-6">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" class="w-24 h-24 rounded-2xl object-cover ring-4 ring-cyan-500/30" alt="Profile">
+          <div class="space-y-2 text-center md:text-right flex-1">
+            <h2 class="text-2xl font-bold text-white">سەلوان ئەحمەد</h2>
+            <p class="text-xs text-cyan-400 font-semibold">گەشەپێدەری پلەی یەکەم & ئەندامی VIP Enterprise</p>
+            <p class="text-xs text-slate-400">ئەندامە لە: بەفرانباری 2024 | ID: #984210-SALWAN</p>
+          </div>
+          <button onclick="openAuthModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-xs font-bold text-slate-200 border border-slate-700 hover:bg-slate-700">
+            گۆڕینی زانیارییەکان
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="glass-panel p-6 rounded-2xl space-y-4">
+            <h3 class="text-sm font-bold text-white border-b border-slate-800 pb-2">کلیلی API ی تایبەت</h3>
+            <div class="flex items-center gap-2">
+              <input type="password" value="sk-salwan2006-enterprise-99881122" readonly class="w-full bg-slate-900 border border-slate-700 text-xs text-slate-300 p-2.5 rounded-xl font-mono">
+              <button onclick="copyApiKey()" class="px-3 py-2.5 rounded-xl bg-cyan-500 text-slate-950 font-bold text-xs hover:bg-cyan-400">کۆپی</button>
+            </div>
+            <p class="text-[10px] text-slate-400">ئەم کلیلە ڕێگەت پێدەدات لە ڕێگەی SDK بەکاری بهێنیت.</p>
+          </div>
+
+          <div class="glass-panel p-6 rounded-2xl space-y-4">
+            <h3 class="text-sm font-bold text-white border-b border-slate-800 pb-2">ڕێژەی بەکارهێنانی پشکی ڕۆژانە (Tokens)</h3>
+            <div class="space-y-2">
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-300">بەکارهاتوو: 420,000 / 1,000,000</span>
+                <span class="text-cyan-400 font-bold">42%</span>
+              </div>
+              <div class="w-full bg-slate-900 h-2.5 rounded-full overflow-hidden">
+                <div class="bg-gradient-to-r from-cyan-500 to-indigo-600 h-full rounded-full w-[42%]"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+
+  <!-- ================= MODALS ================= -->
+
+  <!-- LIGHTBOX MODAL FOR GALLERY -->
+  <div id="lightboxModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="relative max-w-4xl w-full glass-panel overflow-hidden rounded-2xl border border-slate-700">
+      <button onclick="closeLightbox()" class="absolute top-4 left-4 z-20 p-2 rounded-full bg-slate-900/80 text-white hover:bg-slate-800">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+      <div class="grid grid-cols-1 md:grid-cols-3">
+        <div class="md:col-span-2 bg-black flex items-center justify-center min-h-[300px]">
+          <img id="lightboxImg" src="" class="max-h-[80vh] w-full object-contain" alt="Enlarged">
+        </div>
+        <div class="p-6 space-y-4 flex flex-col justify-between">
+          <div class="space-y-3">
+            <span id="lightboxBadge" class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-bold border border-emerald-500/30"></span>
+            <h3 id="lightboxTitle" class="text-xl font-bold text-white"></h3>
+            <p id="lightboxDesc" class="text-xs text-slate-300 leading-relaxed"></p>
+          </div>
+          <div class="pt-4 border-t border-slate-800 flex items-center justify-between">
+            <button onclick="simulateLike()" class="flex items-center gap-2 text-xs font-bold text-rose-400 hover:scale-105 transition">
+              <i class="fa-solid fa-heart"></i> <span id="lightboxLikes">124</span> حەزپێکردن
+            </button>
+            <button onclick="downloadImageSim()" class="px-4 py-2 rounded-xl bg-cyan-500 text-slate-950 font-bold text-xs hover:bg-cyan-400">
+              <i class="fa-solid fa-download"></i> داگرتن
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ASK QUESTION MODAL -->
+  <div id="askModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="w-full max-w-lg glass-panel p-6 rounded-2xl border border-slate-700 space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 class="text-lg font-bold text-white">پرسیارێکی نوێ دروست بکە</h3>
+        <button onclick="closeAskQuestionModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="space-y-3">
+        <input type="text" id="newQuestionTitle" placeholder="سەردێڕی پرسیارەکە..." class="w-full bg-slate-900 border border-slate-700 text-xs text-white p-3 rounded-xl focus:border-amber-400 outline-none">
+        <textarea id="newQuestionBody" rows="4" placeholder="ڕوونکردنەوەی زیاتر..." class="w-full bg-slate-900 border border-slate-700 text-xs text-white p-3 rounded-xl focus:border-amber-400 outline-none"></textarea>
+      </div>
+      <button onclick="submitNewQuestion()" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 font-bold text-xs text-white shadow-glow-gold">
+        تۆمارکردن و بڵاوکردنەوە
+      </button>
+    </div>
+  </div>
+
+
+  <!-- AUTH MODAL -->
+  <div id="authModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="w-full max-w-md glass-panel p-6 rounded-2xl border border-slate-700 space-y-5">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 class="text-lg font-bold text-white">تۆمارکردن / چوونەژوورەوە</h3>
+        <button onclick="closeAuthModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="space-y-3">
+        <input type="email" value="salwan.developer@universe.ai" class="w-full bg-slate-900 border border-slate-700 text-xs text-white p-3 rounded-xl outline-none">
+        <input type="password" value="••••••••••••" class="w-full bg-slate-900 border border-slate-700 text-xs text-white p-3 rounded-xl outline-none">
+      </div>
+      <button onclick="closeAuthModal()" class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 font-bold text-xs text-white shadow-glow-cyan">
+        چوونەژوورەوە بۆ S-SALWAN2006 AI
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ================= JAVASCRIPT CODE ENGINE ================= -->
+  <script>
+    /* ----------------------------------------------------
+       1. ANIMATED MESH GRADIENT CANVAS BACKGROUND
+    ---------------------------------------------------- */
+    const canvas = document.getElementById('mesh-canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let particles = [];
+
+    function resizeCanvas() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.radius = Math.random() * 150 + 50;
+        this.vx = (Math.random() - 0.5) * 0.5;
+        this.vy = (Math.random() - 0.5) * 0.5;
+        this.color = ['rgba(0, 243, 255, 0.08)', 'rgba(168, 85, 247, 0.08)', 'rgba(255, 215, 0, 0.05)'][Math.floor(Math.random() * 3)];
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        if (this.x < -100) this.x = width + 100;
+        if (this.x > width + 100) this.x = -100;
+        if (this.y < -100) this.y = height + 100;
+        if (this.y > height + 100) this.y = -100;
+      }
+      draw() {
+        ctx.beginPath();
+        let grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius);
+        grad.addColorStop(0, this.color);
+        grad.addColorStop(1, 'transparent');
+        ctx.fillStyle = grad;
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    for (let i = 0; i < 15; i++) {
+      particles.push(new Particle());
+    }
+
+    function animateMesh() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animateMesh);
+    }
+    animateMesh();
+
+
+    /* ----------------------------------------------------
+       2. TAB NAVIGATION & MOBILE SIDEBAR CONTROL
+    ---------------------------------------------------- */
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+      const selectedTab = document.getElementById('tab-' + tabId);
+      const selectedNav = document.getElementById('nav-' + tabId);
+
+      if (selectedTab) selectedTab.classList.remove('hidden');
+      if (selectedNav) selectedNav.classList.add('active');
+
+      // Close mobile sidebar if open
+      const sidebar = document.getElementById('sidebar');
+      if (!sidebar.classList.contains('translate-x-full') && window.innerWidth < 1024) {
+        sidebar.classList.add('translate-x-full');
+      }
+    }
+
+    document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.toggle('translate-x-full');
+    });
+
+
+    /* ----------------------------------------------------
+       3. THEME CUSTOMIZER ENGINE
+    ---------------------------------------------------- */
+    function toggleThemeMenu() {
+      document.getElementById('themeMenu').classList.toggle('hidden');
+    }
+
+    function setTheme(themeName) {
+      document.body.classList.remove('theme-gold', 'theme-emerald', 'theme-cyberpunk');
+      if (themeName !== 'default') {
+        document.body.classList.add('theme-' + themeName);
+      }
+      document.getElementById('themeMenu').classList.add('hidden');
+    }
+
+
+    /* ----------------------------------------------------
+       4. REAL-TIME AI VOICE & SPEECH ASSISTANT ENGINE
+    ---------------------------------------------------- */
+    let recognition = null;
+    let isListening = false;
+    const voiceWaveCanvas = document.getElementById('voiceWaveCanvas');
+    const waveCtx = voiceWaveCanvas.getContext('2d');
+    let waveAnimId = null;
+
+    // Speech Synthesis setup
+    const synth = window.speechSynthesis;
+
+    // Initialize Web Speech Recognition
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.onstart = function() {
+        isListening = true;
+        updateVoiceUI(true);
+        startWaveAnimation();
+      };
+
+      recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        addVoiceLog('تۆ', transcript);
+        processAIVoiceResponse(transcript);
+      };
+
+      recognition.onerror = function() {
+        updateVoiceUI(false);
+        stopWaveAnimation();
+      };
+
+      recognition.onend = function() {
+        isListening = false;
+        updateVoiceUI(false);
+        stopWaveAnimation();
+      };
+    }
+
+    function toggleVoiceRecognition() {
+      if (!recognition) {
+        alert('وێبگەڕەکەت پشتگیری لە Web Speech API ناکات.');
+        return;
+      }
+      if (isListening) {
+        recognition.stop();
+      } else {
+        const lang = document.getElementById('voiceLangSelect').value;
+        recognition.lang = lang;
+        recognition.start();
+      }
+    }
+
+    function updateVoiceUI(listening) {
+      const btn = document.getElementById('micToggleBtn');
+      const icon = document.getElementById('micIcon');
+      const dot = document.getElementById('voiceStatusDot');
+      const text = document.getElementById('voiceStatusText');
+      const glow = document.getElementById('voiceGlowBg');
+
+      if (listening) {
+        btn.classList.add('scale-110');
+        icon.className = 'fa-solid fa-microphone-slash text-rose-400';
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping';
+        text.innerText = 'گوێگرتن لە دەنگ...';
+        glow.className = 'absolute w-96 h-96 rounded-full bg-cyan-400/30 blur-3xl transition-all duration-300';
+      } else {
+        btn.classList.remove('scale-110');
+        icon.className = 'fa-solid fa-microphone text-cyan-400';
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-slate-500';
+        text.innerText = 'ئامادەیە بۆ گوێگرتن';
+        glow.className = 'absolute w-72 h-72 rounded-full bg-cyan-500/10 blur-3xl transition-all duration-500';
+      }
+    }
+
+    function processAIVoiceResponse(userQuery) {
+      // Dynamic Simulated AI Responses based on language/keywords
+      let aiResponse = "من وەڵامی پرسیارەکەت دەدەمەوە: " + userQuery + ". S-SALWAN2006 AI هەمیشە ئامادەیە بۆ خزمەتکردنت.";
+      
+      if (userQuery.includes('سڵاو') || userQuery.includes('چۆنی')) {
+        aiResponse = "سڵاو لە تۆش بەخێربێیت! من سستەمی دەنگی سەلوان ئێ ئایم، چۆن دەتوانم یارمەتیدەر بم؟";
+      } else if (userQuery.includes('کێیت') || userQuery.includes('ناو')) {
+        aiResponse = "من مۆدێلی زانیاری و دەنگی S-SALWAN2006 AI Universe م، دروستکراوم بۆ وەڵامدانەوەی خێرا.";
+      }
+
+      addVoiceLog('S-SALWAN AI', aiResponse);
+
+      if (document.getElementById('autoSpeakToggle').checked) {
+        speakText(aiResponse);
+      }
+    }
+
+    function speakText(text) {
+      if (!synth) return;
+      synth.cancel(); // Stop current speech
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = parseFloat(document.getElementById('speechRate').value);
+      utterance.pitch = parseFloat(document.getElementById('speechPitch').value);
+      utterance.lang = document.getElementById('voiceLangSelect').value;
+      synth.speak(utterance);
+    }
+
+    function addVoiceLog(sender, text) {
+      const log = document.getElementById('voiceChatLog');
+      const isAI = sender.includes('SALWAN');
+      log.innerHTML += `
+        <div class="p-2.5 rounded-lg ${isAI ? 'bg-cyan-950/40 border border-cyan-500/30 text-cyan-200' : 'bg-slate-900 border border-slate-800 text-slate-300'}">
+          <span class="font-bold ${isAI ? 'text-cyan-400' : 'text-amber-400'}">${sender}:</span> ${text}
+        </div>
+      `;
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function clearVoiceLog() {
+      document.getElementById('voiceChatLog').innerHTML = '';
+    }
+
+    // Voice Visualizer Waves Canvas Loop
+    function startWaveAnimation() {
+      let step = 0;
+      function renderWave() {
+        waveCtx.clearRect(0, 0, voiceWaveCanvas.width, voiceWaveCanvas.height);
+        waveCtx.beginPath();
+        waveCtx.lineWidth = 3;
+        waveCtx.strokeStyle = '#00f3ff';
+
+        const width = voiceWaveCanvas.width;
+        const height = voiceWaveCanvas.height;
+
+        for (let x = 0; x < width; x += 5) {
+          const y = Math.sin((x + step) * 0.05) * 20 + height / 2;
+          if (x === 0) waveCtx.moveTo(x, y);
+          else waveCtx.lineTo(x, y);
+        }
+        waveCtx.stroke();
+        step += 2;
+        waveAnimId = requestAnimationFrame(renderWave);
+      }
+      renderWave();
+    }
+
+    function stopWaveAnimation() {
+      if (waveAnimId) cancelAnimationFrame(waveAnimId);
+      waveCtx.clearRect(0, 0, voiceWaveCanvas.width, voiceWaveCanvas.height);
+    }
+
+
+    /* ----------------------------------------------------
+       5. COMMUNITY Q&A SYSTEM DATA & ENGINE
+    ---------------------------------------------------- */
+    let questionsData = [
+      {
+        id: 1,
+        author: 'ڕێبین عومەر',
+        avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80',
+        title: 'چۆن مۆدێلی S-SALWAN2006 بە بەراورد لەگەڵ مۆدێلە جیهانییەکان کاردەکات؟',
+        body: 'سڵاو، دەمەوێت بزانم خێرایی و دروستی تێگەیشتن لە کوردی لەم سستەمە بە چ ڕێژەیەکە؟',
+        upvotes: 42,
+        time: '10 خولەک پێش ئێستا',
+        answers: [
+          {
+            author: 'S-SALWAN AI Bot',
+            isAI: true,
+            text: 'مۆدێلی S-SALWAN2006 ت تایبەت کراوە بە زمانە ڕۆژهەڵاتییەکان و بە تایبەت کوردی سورانی، بە ڕێژەی 99% لە دەنگ و دەق تێدەگات.'
+          }
+        ]
+      },
+      {
+        id: 2,
+        author: 'دیلان ئەحمەد',
+        avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80',
+        title: 'چۆن وێنەی 8K بە دروستی دروست بکەم لە تاقیگەکەدا؟',
+        body: 'کاتێک Prompt ئینگلیزی دەنووسم ئەنجامەکەی زۆر باشترە، ئایا دەتوانم کوردی بەکاربهێنم؟',
+        upvotes: 28,
+        time: '1 کاتژمێر پێش ئێستا',
+        answers: [
+          {
+            author: 'سەرکەوت زانستی',
+            isAI: false,
+            text: 'بەڵێ سستەمەکە هەردوو زمان وەردەگرێت بەڵام وەسفی ورد بدە.'
+          }
+        ]
+      }
+    ];
+
+    function renderQuestions() {
+      const container = document.getElementById('questionsContainer');
+      container.innerHTML = questionsData.map(q => `
+        <div class="glass-panel p-5 rounded-2xl space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <img src="${q.avatar}" class="w-8 h-8 rounded-full" alt="User">
+              <div>
+                <div class="text-xs font-bold text-white">${q.author}</div>
+                <div class="text-[10px] text-slate-400">${q.time}</div>
+              </div>
+            </div>
+            <button onclick="upvoteQuestion(${q.id})" class="flex items-center gap-1 px-3 py-1 rounded-xl bg-slate-900 border border-slate-700 text-xs text-amber-400 font-bold hover:bg-amber-500/10">
+              <i class="fa-solid fa-caret-up"></i> ${q.upvotes}
+            </button>
+          </div>
+
+          <h3 class="text-base font-bold text-white">${q.title}</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">${q.body}</p>
+
+          <!-- Answers Section -->
+          <div class="pt-3 border-t border-slate-800 space-y-2">
+            ${q.answers.map(a => `
+              <div class="p-3 rounded-xl ${a.isAI ? 'bg-cyan-950/30 border border-cyan-500/30' : 'bg-slate-900'} space-y-1">
+                <div class="text-xs font-bold ${a.isAI ? 'text-cyan-400' : 'text-slate-200'} flex items-center gap-1">
+                  ${a.isAI ? '<i class="fa-solid fa-robot"></i>' : ''} ${a.author}
+                </div>
+                <div class="text-xs text-slate-300">${a.text}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function upvoteQuestion(id) {
+      const q = questionsData.find(item => item.id === id);
+      if (q) {
+        q.upvotes++;
+        renderQuestions();
+      }
+    }
+
+    function openAskQuestionModal() {
+      document.getElementById('askModal').classList.remove('hidden');
+    }
+
+    function closeAskQuestionModal() {
+      document.getElementById('askModal').classList.add('hidden');
+    }
+
+    function submitNewQuestion() {
+      const title = document.getElementById('newQuestionTitle').value;
+      const body = document.getElementById('newQuestionBody').value;
+
+      if (!title) return;
+
+      const newQ = {
+        id: Date.now(),
+        author: 'سەلوان ئەحمەد',
+        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80',
+        title: title,
+        body: body,
+        upvotes: 1,
+        time: 'ئێستا',
+        answers: [
+          {
+            author: 'S-SALWAN AI Instant Bot',
+            isAI: true,
+            text: 'سوپاس بۆ پرسیارەکەت! سستەمی زیرەک بە شێوەیەکی خۆکارانە شیکاری بۆ پرسیارەکەت دەکات.'
+          }
+        ]
+      };
+
+      questionsData.unshift(newQ);
+      renderQuestions();
+      closeAskQuestionModal();
+      document.getElementById('newQuestionTitle').value = '';
+      document.getElementById('newQuestionBody').value = '';
+    }
+
+
+    /* ----------------------------------------------------
+       6. EXPANDED ULTRA-HD GALLERY DATA & LIGHTBOX
+    ---------------------------------------------------- */
+    const galleryItems = [
+      {
+        id: 1,
+        category: 'cars',
+        title: 'Bugatti Tourbillon Hypercar',
+        desc: 'سوپەرکاری دەگمەنی بزوێنەری V16 لەگەڵ تەکنەلۆجیای هایبرید.',
+        img: 'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=800&q=80',
+        likes: 340
+      },
+      {
+        id: 2,
+        category: 'cars',
+        title: 'Futuristic Electric Supercar',
+        desc: 'دیزاینی سایبەر و بزوێنەری کارەبایی ڕەها.',
+        img: 'https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?auto=format&fit=crop&w=800&q=80',
+        likes: 210
+      },
+      {
+        id: 3,
+        category: 'culture',
+        title: 'جلوبەرگی ڕەسەنی کوردی',
+        desc: 'جوانی و ڕازاوەیی ڕەنگەکانی کەلتور و جلی کوردی.',
+        img: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80',
+        likes: 580
+      },
+      {
+        id: 4,
+        category: 'nature',
+        title: 'دار و درەختی بەتەمەن',
+        desc: 'دارستانی سەوز و سروشتی ئەفسووناوی چیاکانی کوردستان.',
+        img: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80',
+        likes: 410
+      },
+      {
+        id: 5,
+        category: 'space',
+        title: 'تەلەس کۆپی James Webb & گەردوون',
+        desc: 'وێنەی درەوشاوەی ئەستێرەکان و گەلەستێرەی دوور.',
+        img: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80',
+        likes: 620
+      },
+      {
+        id: 6,
+        category: 'nature',
+        title: 'گژوگیا و گوڵی کوێستان',
+        desc: 'گوڵە کێوییەکانی وەرزی بەهار.',
+        img: 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=800&q=80',
+        likes: 195
+      }
+    ];
+
+    function renderGallery(filter = 'all') {
+      const grid = document.getElementById('galleryGrid');
+      const filtered = filter === 'all' ? galleryItems : galleryItems.filter(i => i.category === filter);
+
+      grid.innerHTML = filtered.map(item => `
+        <div onclick="openLightbox(${item.id})" class="glass-card rounded-2xl overflow-hidden cursor-pointer group">
+          <div class="relative h-48 overflow-hidden">
+            <img src="${item.img}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="${item.title}">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-80"></div>
+            <span class="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/60 text-[10px] text-cyan-300 font-bold uppercase">${item.category}</span>
+          </div>
+          <div class="p-3">
+            <h4 class="text-xs font-bold text-white truncate">${item.title}</h4>
+            <div class="flex items-center justify-between mt-2 text-[10px] text-slate-400">
+              <span><i class="fa-solid fa-heart text-rose-500"></i> ${item.likes}</span>
+              <span class="text-cyan-400 font-bold">بینین <i class="fa-solid fa-expand"></i></span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterGallery(cat) {
+      renderGallery(cat);
+    }
+
+    let activeLightboxItem = null;
+    function openLightbox(id) {
+      activeLightboxItem = galleryItems.find(i => i.id === id);
+      if (!activeLightboxItem) return;
+
+      document.getElementById('lightboxImg').src = activeLightboxItem.img;
+      document.getElementById('lightboxTitle').innerText = activeLightboxItem.title;
+      document.getElementById('lightboxDesc').innerText = activeLightboxItem.desc;
+      document.getElementById('lightboxBadge').innerText = activeLightboxItem.category.toUpperCase();
+      document.getElementById('lightboxLikes').innerText = activeLightboxItem.likes;
+
+      document.getElementById('lightboxModal').classList.remove('hidden');
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightboxModal').classList.add('hidden');
+    }
+
+    function simulateLike() {
+      if (activeLightboxItem) {
+        activeLightboxItem.likes++;
+        document.getElementById('lightboxLikes').innerText = activeLightboxItem.likes;
+        renderGallery();
+      }
+    }
+
+    function downloadImageSim() {
+      alert('داگرتنی وێنەی Ultra-HD دەستی پێکرد...');
+    }
+
+
+    /* ----------------------------------------------------
+       7. SMART SEARCH ENGINE SIMULATION
+    ---------------------------------------------------- */
+    function performSearch() {
+      const q = document.getElementById('searchInput').value;
+      if (!q) return;
+
+      const area = document.getElementById('searchResultsArea');
+      const summary = document.getElementById('searchSummaryText');
+      const grid = document.getElementById('searchCardsGrid');
+
+      area.classList.remove('hidden');
+      summary.innerText = `شیکاری AI بۆ (${q}): بەپێی نوێترین داتاکانی گەڕان، ئەم بابەتە یەکێکە لە تەوەرە سەرەکییەکان لە بوارەکەی خۆیدا و سەرچاوەی جۆراوجۆری زانستی لەسەر بەردەستە.`;
+
+      grid.innerHTML = `
+        <div class="glass-panel p-4 rounded-xl space-y-2">
+          <h4 class="text-xs font-bold text-cyan-400">زانیاری سەرەکی</h4>
+          <p class="text-xs text-slate-300">پوختەی سەرچاوە متمانەپێکراوەکانی گەڕانی زیرەک لەگەڵ تێگەیشتنی نوێ.</p>
+        </div>
+        <div class="glass-panel p-4 rounded-xl space-y-2">
+          <h4 class="text-xs font-bold text-amber-400">تەوەرە پەیوەندیدارەکان</h4>
+          <p class="text-xs text-slate-300">بابەتە بەستراوەکان و شیکاری زیاتر لە سەرچاوە جیهانییەکان.</p>
+        </div>
+      `;
+    }
+
+    function quickSearch(text) {
+      document.getElementById('searchInput').value = text;
+      performSearch();
+    }
+
+
+    /* ----------------------------------------------------
+       8. AI IMAGE STUDIO ENGINE
+    ---------------------------------------------------- */
+    function generateAIStudioImage() {
+      const prompt = document.getElementById('imagePromptInput').value;
+      if (!prompt) return;
+
+      const placeholder = document.getElementById('imageStudioPlaceholder');
+      const loading = document.getElementById('imageStudioLoading');
+      const result = document.getElementById('imageStudioResult');
+
+      placeholder.classList.add('hidden');
+      result.classList.add('hidden');
+      loading.classList.remove('hidden');
+      loading.classList.add('flex');
+
+      setTimeout(() => {
+        loading.classList.add('hidden');
+        loading.classList.remove('flex');
+        result.classList.remove('hidden');
+
+        // Dynamic placeholder based on prompt style
+        document.getElementById('generatedImageTag').src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1000&q=80';
+      }, 2500);
+    }
+
+    function downloadStudioImage() {
+      alert('داگرتنی وێنەی AI Studio سەرکەوتوو بوو.');
+    }
+
+
+    /* ----------------------------------------------------
+       9. KURDISH POETRY HUB DATA & RENDER
+    ---------------------------------------------------- */
+    const poemsData = [
+      {
+        poet: 'نالی',
+        title: 'خاڵی ڕووت',
+        lines: ['مەست بووم لە سەیری خاڵی ڕووت', 'عاشق بووم لە چاوی جادووت']
+      },
+      {
+        poet: 'مەحوی',
+        title: 'شەوی تاری تاریکی',
+        lines: ['لە دەوری دەستی تۆدا خول دەخۆم', 'هەتا ماوم فیدای نازی تۆ دەبم']
+      },
+      {
+        poet: 'شێرکۆ بێکەس',
+        title: 'دەنگی باران',
+        lines: ['من کە باران دەبارێ', 'بیری چاوەکانت دەکەم...']
+      }
+    ];
+
+    function renderPoetry() {
+      const container = document.getElementById('poetryContainer');
+      container.innerHTML = poemsData.map(p => `
+        <div class="glass-panel p-5 rounded-2xl space-y-3 border-r-4 border-amber-400">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-amber-400">${p.poet}</span>
+            <span class="text-[10px] text-slate-400">هۆنراوەی کلاسیک</span>
+          </div>
+          <h3 class="text-base font-bold text-white">${p.title}</h3>
+          <div class="space-y-1 text-xs text-slate-300 italic">
+            ${p.lines.map(l => `<p>"${l}"</p>`).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+
+    /* ----------------------------------------------------
+       10. ANALYTICS CHART.JS RENDER
+    ---------------------------------------------------- */
+    function initCharts() {
+      const ctx1 = document.getElementById('trafficChart').getContext('2d');
+      new Chart(ctx1, {
+        type: 'line',
+        data: {
+          labels: ['شەممە', 'یەکشەممە', 'دووشەممە', 'سێشەممە', 'چوارشەممە', 'پێنجشەممە', 'جومعە'],
+          datasets: [{
+            label: 'سەردانکەرانی ڕاستەوخۆ',
+            data: [1200, 1900, 3000, 5000, 4200, 6800, 9500],
+            borderColor: '#00f3ff',
+            backgroundColor: 'rgba(0, 243, 255, 0.1)',
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: '#94a3b8' } },
+            y: { ticks: { color: '#94a3b8' } }
+          }
+        }
+      });
+
+      const ctx2 = document.getElementById('modelsChart').getContext('2d');
+      new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+          labels: ['S-SALWAN Voice', 'AI Image Studio', 'Smart Search', 'Q&A Community'],
+          datasets: [{
+            data: [45, 25, 20, 10],
+            backgroundColor: ['#00f3ff', '#a855f7', '#10b981', '#ffd700']
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { labels: { color: '#94a3b8' } } }
+        }
+      });
+    }
+
+
+    /* ----------------------------------------------------
+       11. AUTH MODAL & PROFILE UTILS
+    ---------------------------------------------------- */
+    function openAuthModal() {
+      document.getElementById('authModal').classList.remove('hidden');
+    }
+    function closeAuthModal() {
+      document.getElementById('authModal').classList.add('hidden');
+    }
+    function copyApiKey() {
+      alert('کلیلی API بە سەرکەوتوویی کۆپی کرا.');
+    }
+
+
+    /* ----------------------------------------------------
+       INITIALIZATION ON PAGE LOAD
+    ---------------------------------------------------- */
+    window.onload = function() {
+      renderQuestions();
+      renderGallery('all');
+      renderPoetry();
+      initCharts();
+    };
+  </script>
+</body>
+</html>
